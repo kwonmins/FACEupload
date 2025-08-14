@@ -9,11 +9,13 @@ const FormData = require("form-data");
 const axios = require("axios");
 
 const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users"); // 파일명이 user.js인 경우
+const usersRouter = require("./routes/users");
 
 const app = express();
+
+// ✅ Vercel 서버리스: /tmp만 사용 가능
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "/tmp"), // ✅ 유일한 쓰기 가능 경로
+  destination: (req, file, cb) => cb(null, "/tmp"),
   filename: (req, file, cb) =>
     cb(null, Date.now() + "-" + (file.originalname || "file")),
 });
@@ -24,13 +26,30 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: false, limit: "20mb" }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+
+// (옵션) 콜랩 핑
+app.get("/ping-colab", async (req, res) => {
+  try {
+    const r = await axios.get("https://500c6f6d7fd0.ngrok-free.app/healthz", {
+      timeout: 5000,
+    });
+    res.send(`ok ${r.status} ${r.data}`);
+  } catch (e) {
+    const body = e.response?.data
+      ? Buffer.isBuffer(e.response.data)
+        ? e.response.data.toString()
+        : JSON.stringify(e.response.data)
+      : e.message;
+    res.status(502).send(`fail ${e.response?.status} ${body}`);
+  }
+});
 
 // ✅ 업로드 및 Colab 호출 라우트
 app.post(
@@ -52,11 +71,14 @@ app.post(
       form.append("color", fs.createReadStream(colorPath));
 
       const response = await axios.post(
-        "https://500c6f6d7fd0.ngrok-free.app/generate", // 🔁  ngrok 주소
+        "https://500c6f6d7fd0.ngrok-free.app/generate",
         form,
         {
           headers: form.getHeaders(),
           responseType: "arraybuffer",
+          timeout: 55000, // ⬅️ Vercel 함수 제한(60s) 대비
+          maxBodyLength: Infinity,
+          maxContentLength: Infinity,
         }
       );
 
@@ -72,18 +94,25 @@ app.post(
         base64Image,
       });
     } catch (err) {
-      console.error("❌ Colab 서버 호출 실패:", err.message);
+      const status = err.response?.status;
+      const body = err.response?.data
+        ? Buffer.isBuffer(err.response.data)
+          ? err.response.data.toString()
+          : JSON.stringify(err.response.data)
+        : err.message;
+
+      console.error("❌ Colab 서버 호출 실패:", status, body);
       res.status(500).send("서버 오류");
     }
   }
 );
 
-// catch 404 and forward to error handler
+// 404
 app.use(function (req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// 에러 핸들러
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -91,9 +120,14 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`✅ Express 서버 실행 중: http://localhost:${port}`);
-});
+// ✅ Vercel에선 listen 금지: export만
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`✅ Express 서버 실행 중: http://localhost:${port}`);
+  });
+}
 
 module.exports = app;
