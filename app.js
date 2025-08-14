@@ -12,7 +12,12 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users"); // 파일명이 user.js인 경우
 
 const app = express();
-const upload = multer({ dest: "uploads/" });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "/tmp"), // ✅ 유일한 쓰기 가능 경로
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + "-" + (file.originalname || "file")),
+});
+const upload = multer({ storage });
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
