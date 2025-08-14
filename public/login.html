@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>로그인 - 헤어스타일 시뮬레이터</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f5f6fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+      }
+      .login-box {
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 320px;
+        text-align: center;
+      }
+      .login-box h1 {
+        margin-bottom: 24px;
+      }
+      .social-login button {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      .naver {
+        background-color: #1ec800;
+        color: white;
+      }
+      .naver:hover {
+        background-color: #17b300;
+      }
+      .kakao {
+        background-color: #fae100;
+        color: #3c1e1e;
+      }
+      .kakao:hover {
+        background-color: #e0c200;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-box">
+      <h1>로그인</h1>
+      <div class="social-login">
+        <form action="/auth/naver" method="GET">
+          <button class="naver">네이버로 로그인</button>
+        </form>
+        <form action="/auth/kakao" method="GET">
+          <button class="kakao">카카오로 로그인</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

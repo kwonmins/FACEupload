@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>연예인 헤어스타일 합성기</title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <header>연예인 헤어스타일 합성기</header>
+
+    <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+      <label>👨‍🦲 사용자 얼굴 사진:</label>
+      <input type="file" name="user" accept="image/*" required id="userInput" />
+
+      <label>🎭 연예인 스타일 사진:</label>
+      <input type="file" name="style" accept="image/*" required id="styleInput" />
+
+      <label>💇 염색 색상 참고 이미지:</label>
+      <input type="file" name="color" accept="image/*" required id="colorInput" />
+
+      <button type="submit">변환 시작</button>
+    </form>
+
+    <div class="preview">
+      <div class="side-by-side" id="inputPreview"></div>
+    </div>
+
+    <footer>권민성 가발합성</footer>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const userInput = document.getElementById("userInput");
+        const styleInput = document.getElementById("styleInput");
+        const colorInput = document.getElementById("colorInput");
+        const inputPreview = document.getElementById("inputPreview");
+
+        function handlePreview(input, id) {
+          const file = input.files[0];
+          if (!document.getElementById(id)) {
+            const img = document.createElement("img");
+            img.id = id;
+            inputPreview.appendChild(img);
+          }
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            document.getElementById(id).src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+
+        userInput.addEventListener("change", () => handlePreview(userInput, "userPreview"));
+        styleInput.addEventListener("change", () => handlePreview(styleInput, "stylePreview"));
+        colorInput.addEventListener("change", () => handlePreview(colorInput, "colorPreview"));
+      });
+    </script>
+  </body>
+</html>

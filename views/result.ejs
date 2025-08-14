@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>합성 결과</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(to right, #f9f9f9, #e9f1ff);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      h1 {
+        color: #4a90e2;
+        margin-bottom: 2rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      .image-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .image-box img {
+  width: 260px;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+      .label {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+
+      a {
+        margin-top: 2rem;
+        text-decoration: none;
+        color: white;
+        background-color: #4a90e2;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      a:hover {
+        background-color: #357abd;
+      }
+
+      footer {
+        margin-top: auto;
+        padding: 1rem;
+        font-size: 0.9rem;
+        color: #888;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <h1>합성 결과</h1>
+
+    <div class="grid">
+      <div class="image-box">
+        <img src="data:image/png;base64,<%= base64User %>" alt="사용자 얼굴" />
+        <div class="label">사용자 얼굴</div>
+      </div>
+      <div class="image-box">
+        <img src="data:image/png;base64,<%= base64Style %>" alt="스타일 이미지" />
+        <div class="label">스타일 이미지</div>
+      </div>
+      <div class="image-box">
+        <img src="data:image/png;base64,<%= base64Color %>" alt="염색 이미지" />
+        <div class="label">염색 이미지</div>
+      </div>
+      <div class="image-box">
+        <% if (base64Image) { %>
+          <img src="data:image/png;base64,<%= base64Image %>" alt="합성 결과" />
+          <div class="label">합성 결과</div>
+        <% } else { %>
+          <p>❌ 이미지 데이터가 없습니다.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <a href="/">← 다시하기</a>
+
+    <footer>권민성 가발합성</footer>
+  </body>
+</html>
