@@ -52,7 +52,7 @@ app.post(
       form.append("color", fs.createReadStream(colorPath));
 
       const response = await axios.post(
-        "https://826e457bdd3b.ngrok-free.app/generate", // 🔁  ngrok 주소
+        "https://bb700cfc216b.ngrok-free.app/generate", // 🔁  ngrok 주소
         form,
         {
           headers: form.getHeaders(),
