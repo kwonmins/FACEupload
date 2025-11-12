@@ -32,7 +32,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
-// ✅ 업로드 및 Colab 호출 라우트
+// ✅ 업로드 및 Colab 호출 라우트 파이 명령어 : ngrok http --region ap 8080
+
 app.post(
   "/upload",
   upload.fields([{ name: "user" }, { name: "style" }, { name: "color" }]),
@@ -52,7 +53,7 @@ app.post(
       form.append("color", fs.createReadStream(colorPath));
 
       const response = await axios.post(
-        "https://172d971461ef.ngrok-free.app/generate", // 🔁  ngrok 주소
+        "https://85c9cf6c87e3.ngrok-free.app/generate", // 🔁  ngrok 주소
         form,
         {
           headers: form.getHeaders(),
